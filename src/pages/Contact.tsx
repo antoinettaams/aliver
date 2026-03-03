@@ -34,7 +34,7 @@ export default function Contact() {
     formDataToSend.append('_subject', `Nouveau message de contact - ${formData.name}`);
 
     try {
-      const response = await fetch('https://formspree.io/f/mlgwyqdd', {
+      const response = await fetch('https://formspree.io/f/mjgenbba', {
         method: 'POST',
         body: formDataToSend,
         headers: {
