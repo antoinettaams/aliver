@@ -4,9 +4,58 @@ import { motion, AnimatePresence } from 'motion/react';
 
 export default function Contact() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    message: ''
+  });
 
   const toggleFaq = (idx: number) => {
     setOpenFaq(openFaq === idx ? null : idx);
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError(null);
+    setIsSuccess(false);
+
+    const formDataToSend = new FormData();
+    formDataToSend.append('name', formData.name);
+    formDataToSend.append('email', formData.email);
+    formDataToSend.append('message', formData.message);
+    formDataToSend.append('_subject', `Nouveau message de contact - ${formData.name}`);
+
+    try {
+      const response = await fetch('https://formspree.io/f/mlgwyqdd', {
+        method: 'POST',
+        body: formDataToSend,
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setIsSuccess(true);
+        setFormData({ name: '', email: '', message: '' });
+        setTimeout(() => setIsSuccess(false), 5000); // Cache le message après 5 secondes
+      } else {
+        setError(data.error?.message || data.error || 'Une erreur est survenue');
+      }
+    } catch (error) {
+      setError('Erreur de connexion. Vérifiez votre réseau.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const faqs = [
@@ -48,11 +97,32 @@ export default function Contact() {
             className="bg-gray-50 p-6 md:p-8 rounded-2xl border border-gray-100"
           >
             <h2 className="text-xl md:text-2xl font-bold text-secondary mb-5">Envoyez-nous un message</h2>
-            <form className="space-y-5">
+            
+            {isSuccess && (
+              <div className="mb-5 p-3 bg-green-50 border border-green-200 rounded-lg">
+                <p className="text-green-600 text-sm text-center">
+                  ✅ Message envoyé ! Nous vous répondrons dans les plus brefs délais.
+                </p>
+              </div>
+            )}
+
+            {error && (
+              <div className="mb-5 p-3 bg-red-50 border border-red-200 rounded-lg">
+                <p className="text-red-600 text-sm">{error}</p>
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-5">
+              <input type="text" name="_gotcha" style={{ display: 'none' }} />
+              
               <div>
                 <label className="block text-xs font-medium text-gray-700 mb-1">Nom complet</label>
                 <input 
-                  type="text" 
+                  type="text"
+                  name="name"
+                  required
+                  value={formData.name}
+                  onChange={handleChange}
                   className="w-full px-4 py-3.5 text-sm rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all" 
                   placeholder="Votre nom" 
                 />
@@ -60,7 +130,11 @@ export default function Contact() {
               <div>
                 <label className="block text-xs font-medium text-gray-700 mb-1">Email</label>
                 <input 
-                  type="email" 
+                  type="email"
+                  name="email"
+                  required
+                  value={formData.email}
+                  onChange={handleChange}
                   className="w-full px-4 py-3.5 text-sm rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all" 
                   placeholder="votre@email.com" 
                 />
@@ -68,13 +142,21 @@ export default function Contact() {
               <div>
                 <label className="block text-xs font-medium text-gray-700 mb-1">Message</label>
                 <textarea 
+                  name="message"
+                  required
+                  value={formData.message}
+                  onChange={handleChange}
                   rows={4} 
-                  className="w-full px-5 py-7 text-sm rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all" 
+                  className="w-full px-5 py-4 text-sm rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all" 
                   placeholder="Comment pouvons-nous vous aider ?"
                 ></textarea>
               </div>
-              <button className="w-full bg-secondary text-white font-semibold text-sm py-3 rounded-xl hover:bg-secondary/90 transition-colors">
-                Envoyer le message
+              <button 
+                type="submit"
+                disabled={isLoading}
+                className="w-full bg-secondary text-white font-semibold text-sm py-3.5 rounded-xl hover:bg-secondary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isLoading ? 'Envoi en cours...' : 'Envoyer le message'}
               </button>
             </form>
           </motion.div>

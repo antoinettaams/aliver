@@ -1,6 +1,6 @@
 import { X, CheckCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { useState, FormEvent, ChangeEvent } from 'react';
+import { useState, FormEvent } from 'react';
 
 interface OrderModalProps {
   isOpen: boolean;
@@ -9,6 +9,8 @@ interface OrderModalProps {
 
 export default function OrderModal({ isOpen, onClose }: OrderModalProps) {
   const [isSuccess, setIsSuccess] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -16,15 +18,52 @@ export default function OrderModal({ isOpen, onClose }: OrderModalProps) {
     location: '',
   });
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Simulate API call
-    setTimeout(() => {
-      setIsSuccess(true);
-    }, 1000);
+    setIsLoading(true);
+    setError(null);
+
+    // Créer un nouveau FormData
+    const formDataToSend = new FormData();
+    
+    // Ajouter les champs avec les noms que Formspree attend
+    formDataToSend.append('name', `${formData.firstName} ${formData.lastName}`);
+    formDataToSend.append('phone', formData.phone);
+    formDataToSend.append('location', formData.location);
+    formDataToSend.append('order', 'ALIVER Sweat Pads (28 pièces) - 6 000 FCFA');
+    formDataToSend.append('_subject', `Nouvelle commande ALIVER - ${formData.firstName} ${formData.lastName}`);
+    
+    // Optionnel : ton email pour recevoir une copie (si configuré dans Formspree)
+    // formDataToSend.append('_replyto', 'tonemail@example.com');
+    
+    try {
+      const response = await fetch('https://formspree.io/f/mlgwyqdd', {
+        method: 'POST',
+        body: formDataToSend,
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok) {
+        setIsSuccess(true);
+        setFormData({ firstName: '', lastName: '', phone: '', location: '' });
+      } else {
+        // Afficher l'erreur spécifique de Formspree
+        setError(data.error?.message || data.error || 'Une erreur est survenue lors de l\'envoi');
+        console.error('Formspree error:', data);
+      }
+    } catch (error) {
+      setError('Erreur de connexion. Vérifiez votre réseau.');
+      console.error('Network error:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
@@ -32,7 +71,7 @@ export default function OrderModal({ isOpen, onClose }: OrderModalProps) {
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 px-4">
+      <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -67,9 +106,9 @@ export default function OrderModal({ isOpen, onClose }: OrderModalProps) {
                 <div className="w-16 h-16 bg-green-100 text-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
                   <CheckCircle size={32} />
                 </div>
-                <h4 className="text-xl font-bold text-secondary mb-2">Merci !</h4>
+                <h4 className="text-xl font-bold text-secondary mb-2">Merci {formData.firstName} !</h4>
                 <p className="text-gray-600 mb-6">
-                  Votre commande a bien été reçue. Nous vous contacterons très bientôt pour la livraison.
+                  Votre commande a bien été reçue. Nous vous contacterons très bientôt au <strong>{formData.phone}</strong> pour confirmer la livraison.
                 </p>
                 <button
                   onClick={onClose}
@@ -79,7 +118,13 @@ export default function OrderModal({ isOpen, onClose }: OrderModalProps) {
                 </button>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form 
+                onSubmit={handleSubmit} 
+                className="space-y-4"
+              >
+                {/* Anti-spam (caché) */}
+                <input type="text" name="_gotcha" style={{ display: 'none' }} />
+                
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Prénom</label>
@@ -116,8 +161,9 @@ export default function OrderModal({ isOpen, onClose }: OrderModalProps) {
                     value={formData.phone}
                     onChange={handleChange}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
-                    placeholder="+225 07 00 00 00 00"
+                    placeholder="+229 01 23 45 67"
                   />
+                  <p className="text-xs text-gray-500 mt-1">Format: +229 01 23 45 67</p>
                 </div>
 
                 <div>
@@ -129,9 +175,15 @@ export default function OrderModal({ isOpen, onClose }: OrderModalProps) {
                     value={formData.location}
                     onChange={handleChange}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
-                    placeholder="Abidjan, Cocody..."
+                    placeholder="Cotonou, Fidjrossè"
                   />
                 </div>
+
+                {error && (
+                  <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+                    <p className="text-red-600 text-sm">{error}</p>
+                  </div>
+                )}
 
                 <div className="pt-2">
                   <div className="flex justify-between items-center mb-4 p-3 bg-gray-50 rounded-lg border border-gray-100">
@@ -141,9 +193,10 @@ export default function OrderModal({ isOpen, onClose }: OrderModalProps) {
                   
                   <button
                     type="submit"
-                    className="w-full bg-primary text-white font-bold py-3.5 rounded-xl hover:bg-primary/90 transition-transform active:scale-[0.98] shadow-lg shadow-primary/30"
+                    disabled={isLoading}
+                    className="w-full bg-primary text-white font-bold py-3.5 rounded-xl hover:bg-primary/90 transition-transform active:scale-[0.98] shadow-lg shadow-primary/30 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Confirmer ma commande
+                    {isLoading ? 'Envoi en cours...' : 'Confirmer ma commande'}
                   </button>
                   
                   <p className="text-center text-xs text-gray-500 mt-3 flex items-center justify-center gap-1">

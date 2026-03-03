@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'motion/react';
-import { Check, ShoppingCart, MapPin, Star } from 'lucide-react';
+import { Check, ShoppingCart, MapPin } from 'lucide-react';
 import OrderModal from '../components/OrderModal';
 
 export default function Product() {
@@ -41,7 +41,7 @@ export default function Product() {
                 ALIVER Anti-Stain Underarm Sweat Pads
               </h1>
               
-              <div className="flex items-end gap-3 mb-6">
+              <div className="flex items-end gap-3 mb-6 flex-wrap">
                 <span className="text-3xl font-bold text-primary">6 000 FCFA</span>
                 <span className="text-gray-400 line-through text-base mb-1">7 500 FCFA</span>
               </div>
@@ -75,26 +75,20 @@ export default function Product() {
               <div className="bg-gray-50 rounded-xl p-5 mb-6 border border-gray-100">
                 <h3 className="font-semibold text-secondary text-base mb-3">Comment utiliser ?</h3>
                 <div className="space-y-2.5">
-                  <div className="flex gap-3">
-                    <span className="w-5 h-5 bg-secondary text-white rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0">1</span>
-                    <p className="text-xs text-gray-600">Retirez le film adhésif du coussinet.</p>
-                  </div>
-                  <div className="flex gap-3">
-                    <span className="w-5 h-5 bg-secondary text-white rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0">2</span>
-                    <p className="text-xs text-gray-600">Collez le coussinet à l'intérieur de votre vêtement au niveau de l'aisselle.</p>
-                  </div>
-                  <div className="flex gap-3">
-                    <span className="w-5 h-5 bg-secondary text-white rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0">3</span>
-                    <p className="text-xs text-gray-600">Pressez fermement et profitez de votre journée !</p>
-                  </div>
+                  {["Retirez le film adhésif du coussinet.", "Collez le coussinet à l'intérieur de votre vêtement au niveau de l'aisselle.", "Pressez fermement et profitez de votre journée !"].map((step, idx) => (
+                    <div key={idx} className="flex gap-3">
+                      <span className="w-5 h-5 bg-secondary text-white rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0">{idx + 1}</span>
+                      <p className="text-xs text-gray-600">{step}</p>
+                    </div>
+                  ))}
                 </div>
               </div>
 
-              {/* CTA - Desktop */}
-              <div className="mt-auto hidden md:block">
+              {/* Responsive CTA - Desktop + Mobile */}
+              <div className="mt-auto">
                 <button
                   onClick={() => setIsModalOpen(true)}
-                  className="w-full bg-primary text-white font-semibold text-base py-3.5 rounded-xl shadow-lg shadow-primary/30 hover:bg-primary/90 hover:shadow-xl hover:-translate-y-1 transition-all flex items-center justify-center gap-2"
+                  className="w-full md:w-auto bg-primary text-white font-semibold text-base py-3.5 px-6 rounded-xl shadow-lg shadow-primary/30 hover:bg-primary/90 hover:shadow-xl hover:-translate-y-1 transition-all flex items-center justify-center gap-2"
                 >
                   <ShoppingCart size={18} />
                   Commander maintenant
@@ -108,10 +102,10 @@ export default function Product() {
           </div>
         </div>
 
-        {/* Feature Section 1: Image Left, Text Right */}
+        {/* Feature Section 1 */}
         <div className="mt-16">
           <div className="flex flex-col md:flex-row items-center gap-8 lg:gap-12">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: -50 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
@@ -119,15 +113,15 @@ export default function Product() {
               className="w-full md:w-1/2"
             >
               <div className="relative rounded-2xl overflow-hidden shadow-xl aspect-[4/3]">
-                <img 
-                  src="https://placehold.co/800x600/e0f2f1/1A3A5C?text=Confiance+Totale" 
-                  alt="Confiance au quotidien" 
+                <img
+                  src="https://placehold.co/800x600/e0f2f1/1A3A5C?text=Confiance+Totale"
+                  alt="Confiance au quotidien"
                   className="w-full h-full object-cover"
                   referrerPolicy="no-referrer"
                 />
               </div>
             </motion.div>
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: 50 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
@@ -139,11 +133,7 @@ export default function Product() {
                 Que ce soit pour une présentation importante, un rendez-vous galant ou une journée intense, ne laissez plus la transpiration gâcher vos moments.
               </p>
               <ul className="space-y-3">
-                {[
-                  "Fini le stress des auréoles",
-                  "Liberté de mouvement totale",
-                  "Sensation de fraîcheur continue"
-                ].map((item, idx) => (
+                {["Fini le stress des auréoles", "Liberté de mouvement totale", "Sensation de fraîcheur continue"].map((item, idx) => (
                   <li key={idx} className="flex items-center gap-3">
                     <div className="w-5 h-5 rounded-full bg-primary/20 text-primary flex items-center justify-center flex-shrink-0">
                       <Check size={12} strokeWidth={3} />
@@ -156,10 +146,10 @@ export default function Product() {
           </div>
         </div>
 
-        {/* Feature Section 2: Text Left, Image Right */}
+        {/* Feature Section 2 */}
         <div className="mt-16">
           <div className="flex flex-col-reverse md:flex-row items-center gap-8 lg:gap-12">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: -50 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
@@ -173,7 +163,7 @@ export default function Product() {
               <p className="text-base text-gray-600 mb-6 leading-relaxed">
                 Ils s'adaptent à tous types de vêtements, des chemises aux t-shirts, sans créer de gêne ni de bruit de frottement.
               </p>
-              <button 
+              <button
                 onClick={() => setIsModalOpen(true)}
                 className="text-primary font-semibold text-base hover:text-primary/80 transition-colors flex items-center gap-2 group"
               >
@@ -181,7 +171,7 @@ export default function Product() {
                 <span className="group-hover:translate-x-1 transition-transform text-lg">→</span>
               </button>
             </motion.div>
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: 50 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
@@ -189,9 +179,9 @@ export default function Product() {
               className="w-full md:w-1/2"
             >
               <div className="relative rounded-2xl overflow-hidden shadow-xl aspect-[4/3]">
-                <img 
-                  src="https://placehold.co/800x600/f3f4f6/3ABFBF?text=Confort+Invisible" 
-                  alt="Confort et discrétion" 
+                <img
+                  src="https://placehold.co/800x600/f3f4f6/3ABFBF?text=Confort+Invisible"
+                  alt="Confort et discrétion"
                   className="w-full h-full object-cover"
                   referrerPolicy="no-referrer"
                 />
@@ -200,7 +190,7 @@ export default function Product() {
           </div>
         </div>
 
-        {/* Benefits Detail Section */}
+        {/* Benefits Section */}
         <div className="mt-16">
           <div className="text-center mb-10">
             <h2 className="text-2xl md:text-3xl font-bold text-secondary mb-3">Pourquoi ALIVER est différent ?</h2>
@@ -225,7 +215,7 @@ export default function Product() {
                 image: "https://placehold.co/400x300/e0f2f1/3ABFBF?text=Protection"
               }
             ].map((benefit, idx) => (
-              <motion.div 
+              <motion.div
                 key={idx}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -234,9 +224,9 @@ export default function Product() {
                 className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow"
               >
                 <div className="h-40 overflow-hidden">
-                  <img 
-                    src={benefit.image} 
-                    alt={benefit.title} 
+                  <img
+                    src={benefit.image}
+                    alt={benefit.title}
                     className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                     referrerPolicy="no-referrer"
                   />
@@ -250,7 +240,7 @@ export default function Product() {
           </div>
         </div>
 
-        {/* Customer Reviews Section */}
+        {/* Reviews Section */}
         <div className="mt-16 mb-12">
           <div className="text-center mb-10">
             <h2 className="text-2xl md:text-3xl font-bold text-secondary mb-3">Avis Clients</h2>
@@ -295,7 +285,7 @@ export default function Product() {
                 text: "Ma copine m'a conseillé ce produit et j'ai commandé tout de suite. Les coussinets sont discrets et efficaces. Je les porte même quand je vais à la salle de gym. Je valide!"
               }
             ].map((review, idx) => (
-              <motion.div 
+              <motion.div
                 key={idx}
                 initial={{ opacity: 0, scale: 0.95 }}
                 whileInView={{ opacity: 1, scale: 1 }}
@@ -329,15 +319,18 @@ export default function Product() {
         </div>
       </div>
 
-      {/* Mobile Sticky CTA */}
+      
+      {/* Mobile Sticky CTA (optionnel si tu veux un double CTA) */}
       <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-100 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] md:hidden z-40">
-        <button
-          onClick={() => setIsModalOpen(true)}
-          className="w-72 bg-primary text-white font-semibold text-base py-3.5 rounded-xl shadow-lg shadow-primary/30 active:scale-[0.98] transition-transform flex items-center justify-center gap-2"
-        >
-          <ShoppingCart size={18} />
-          Commander maintenant
-        </button>
+        <div className="flex justify-center">
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="w-full bg-primary text-white font-semibold text-base py-3.5 rounded-xl shadow-lg shadow-primary/30 active:scale-[0.98] transition-transform flex items-center justify-center gap-2"
+          >
+            <ShoppingCart size={18} />
+            Commander maintenant
+          </button>
+        </div>
         <p className="text-center text-[10px] text-gray-500 mt-2">
           ✅ Paiement à la livraison — Livraison gratuite à Cotonou, Abomey-Calavi
         </p>
