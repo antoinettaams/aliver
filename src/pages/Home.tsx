@@ -46,7 +46,7 @@ export default function Home() {
             >
               <div className="relative w-full max-w-md aspect-square bg-white rounded-2xl shadow-2xl p-4 sm:p-6 flex items-center justify-center">
                 <img 
-                  src="https://placehold.co/600x600/3ABFBF/FFFFFF?text=ALIVER+Sweat+Pads" 
+                  src="https://i.postimg.cc/1345yWcG/44513395-13db-43e0-9639-78cc66dfab12.jpg" 
                   alt="ALIVER Sweat Pads" 
                   className="w-full h-full object-contain drop-shadow-lg"
                   referrerPolicy="no-referrer"
