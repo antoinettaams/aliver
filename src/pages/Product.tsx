@@ -23,7 +23,7 @@ export default function Product() {
                   className="relative w-full max-w-md aspect-square bg-white rounded-xl shadow-lg p-6 flex items-center justify-center"
                 >
                   <img 
-                    src="https://i.postimg.cc/T1GgS8m6/Protection-discrete-et-confortable-pour-la-peau.png" 
+                    src="https://i.postimg.cc/W3xTVgFL/44513395-13db-43e0-9639-78cc66dfab12.jpg" 
                     alt="ALIVER Product Box" 
                     className="w-full h-full object-contain"
                     referrerPolicy="no-referrer"
